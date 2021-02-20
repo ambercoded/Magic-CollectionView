@@ -1,8 +1,8 @@
 # Magic CollectionView
-A physics-enabled UICollectionViewLayout that strives to create a "magic" feeling when scrolling.
-The UIKit Dynamics Engine is used to create the wave-like physics reaction.
+A physics-enabled UICollectionViewLayout that strives to create a "magic" feeling while scrolling.
+The smoothly animated movement of the items is achieved by using the UIKit Dynamics Engine.
 
-Download the sample project to see it in action while scrolling through a list of yummy vegetables.
+Download the sample project to see it in action and scroll through a list of yummy vegetables.
 
 ## Demo
 ![](https://github.com/ambercoded/readme-gifs/blob/main/magicCollectionView.gif)
@@ -24,6 +24,6 @@ Simply add it to your project in two steps:
 2. Set your collectionView's layout to an instance of MagicCollectionViewFlowLayout.
 
 ## Features to be added soon
-- A natural zoom-in transition to a detail view. Goal: Give the user the impression that he/she is moving in an ever-expanding room. And completely eradicate any hard transitions.
+- A natural zoom-in transition to a detail view. Goal: To give the user the impression that he/she is moving in an ever-expanding room - and to completely eradicate any hard transitions.
 
 
