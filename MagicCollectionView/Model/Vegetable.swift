@@ -11,7 +11,7 @@ import Foundation
 struct Vegetable: Hashable {
     let id: UUID
     let name: String
-    let weight: Double = Double.random(in: 40..<130)
+    let weight: Double = Double.random(in: 42..<111)
     var image: String {
         name
     }
