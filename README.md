@@ -5,7 +5,7 @@ The UIKit Dynamics Engine is used to create the wave-like physics reaction.
 Download the sample project to see it in action while scrolling through a list of yummy vegetables.
 
 ## Demo
-![](https://github.com/ambercoded/readme-gifs/blob/main/magic-CollectionView.gif)
+![](https://github.com/ambercoded/readme-gifs/blob/main/magicCollectionView.gif)
 
 ## Easy tweaking of the physics behavior
 ### Tweak the translation of scroll distance into item movement
