@@ -8,4 +8,4 @@ Simply add it to your project in two steps:
 1. Add the MagicCollectionViewFlowLayout file. 
 2. Set your collectionView's layout to an instance of MagicCollectionViewFlowLayout.
 
-![](https://github.com/ambercoded/readme-gifs/blob/main/magic-CollectionView.gif)
+![](https://github.com/ambercoded/readme-gifs/blob/main/magicCollectionView.gif)
