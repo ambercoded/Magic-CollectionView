@@ -19,6 +19,8 @@
 		3A8D622025E0CC24000A4870 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8D621E25E0CC24000A4870 /* Section.swift */; };
 		3A8D622125E0CC24000A4870 /* Vegetable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8D621F25E0CC24000A4870 /* Vegetable.swift */; };
 		3A8D622425E0CD83000A4870 /* VegetableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8D622325E0CD83000A4870 /* VegetableCell.swift */; };
+		3AA8054F25E174CA00B31007 /* CellTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA8054E25E174CA00B31007 /* CellTransitionManager.swift */; };
+		3AA8055425E178FD00B31007 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA8055325E178FD00B31007 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		3A8D621E25E0CC24000A4870 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		3A8D621F25E0CC24000A4870 /* Vegetable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vegetable.swift; sourceTree = "<group>"; };
 		3A8D622325E0CD83000A4870 /* VegetableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VegetableCell.swift; sourceTree = "<group>"; };
+		3AA8054E25E174CA00B31007 /* CellTransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellTransitionManager.swift; sourceTree = "<group>"; };
+		3AA8055325E178FD00B31007 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +86,7 @@
 				3A6C1AF025E0CA8600D60458 /* SceneDelegate.swift */,
 				3A6C1B0625E0CAC900D60458 /* Screens */,
 				3A6C1B0725E0CACE00D60458 /* Components */,
+				3AA8054D25E174A400B31007 /* Transitions */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -110,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				3A8D621725E0CBA0000A4870 /* Home */,
+				3AA8055225E178E300B31007 /* Detail */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -131,6 +137,22 @@
 				3A8D621B25E0CBEF000A4870 /* MagicCollectionViewFlowLayout.swift */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		3AA8054D25E174A400B31007 /* Transitions */ = {
+			isa = PBXGroup;
+			children = (
+				3AA8054E25E174CA00B31007 /* CellTransitionManager.swift */,
+			);
+			path = Transitions;
+			sourceTree = "<group>";
+		};
+		3AA8055225E178E300B31007 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				3AA8055325E178FD00B31007 /* DetailViewController.swift */,
+			);
+			path = Detail;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -203,6 +225,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AA8055425E178FD00B31007 /* DetailViewController.swift in Sources */,
+				3AA8054F25E174CA00B31007 /* CellTransitionManager.swift in Sources */,
 				3A6C1AF325E0CA8600D60458 /* HomeViewController.swift in Sources */,
 				3A8D621C25E0CBEF000A4870 /* MagicCollectionViewFlowLayout.swift in Sources */,
 				3A8D622125E0CC24000A4870 /* Vegetable.swift in Sources */,

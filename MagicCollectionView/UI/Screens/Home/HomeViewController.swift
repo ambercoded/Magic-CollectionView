@@ -119,5 +119,10 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("tapped item at indexPath: \(indexPath)")
+        let selectedCell = collectionView.cellForItem(at: indexPath) as? VegetableCell
+        guard let selectedVegetable = selectedCell?.vegetable else { return }
+        let detailViewController = DetailViewController(vegetable: selectedVegetable)
+        detailViewController.modalPresentationStyle = .overCurrentContext
+        present(detailViewController, animated: true, completion: nil)
     }
 }

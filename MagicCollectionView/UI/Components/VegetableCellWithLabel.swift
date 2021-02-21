@@ -23,7 +23,7 @@ class VegetableCellWithLabel: UICollectionViewCell, SelfConfiguringCell {
         weightLabel.textColor = .secondaryLabel
 
         let stackView = UIStackView(arrangedSubviews: [imageView, weightLabel])
-        stackView.translatesAutoresizingMaskIntoConstraints = false // constraints will be created manually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         contentView.addSubview(stackView)
 

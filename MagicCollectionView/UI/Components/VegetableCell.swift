@@ -11,6 +11,7 @@ import UIKit
 class VegetableCell: UICollectionViewCell, SelfConfiguringCell {
     static var reuseIdentifier: String = "VegetableCell"
 
+    var vegetable: Vegetable!
     let imageView = UIImageView()
 
     override init(frame: CGRect) {
@@ -36,6 +37,7 @@ class VegetableCell: UICollectionViewCell, SelfConfiguringCell {
     }
 
     func configure(with vegetable: Vegetable) {
+        self.vegetable = vegetable
         imageView.image = UIImage(named: vegetable.image)
     }
 }
