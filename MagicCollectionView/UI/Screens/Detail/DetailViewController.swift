@@ -40,7 +40,9 @@ extension DetailViewController {
         dismissButton = UIButton()
         dismissButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
         dismissButton.setTitle("Back", for: .normal)
+        dismissButton.setTitleColor(.label, for: .normal)
         dismissButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        dismissButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -8)
         dismissButton.translatesAutoresizingMaskIntoConstraints = false
         dismissButton.addTarget(self, action: #selector(backTapped), for: .touchUpInside)
         view.addSubview(dismissButton)
