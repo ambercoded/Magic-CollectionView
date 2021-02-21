@@ -33,12 +33,12 @@ class DetailViewController: UIViewController {
 }
 
 extension DetailViewController {
-
     override func loadView() {
         view = UIView()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        view.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.8)
 
         dismissButton = UIButton()
+        dismissButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
         dismissButton.setTitle("Back", for: .normal)
         dismissButton.setImage(UIImage(systemName: "xmark"), for: .normal)
         dismissButton.translatesAutoresizingMaskIntoConstraints = false
@@ -71,7 +71,7 @@ extension DetailViewController {
         let safeArea = self.view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             dismissButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
-            dismissButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 50),
+            dismissButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
 
             titleLabel.topAnchor.constraint(equalTo: dismissButton.bottomAnchor),
 
