@@ -15,6 +15,7 @@ class MagicCollectionViewFlowLayout: UICollectionViewFlowLayout {
     }()
 
     var currentlyVisibleItemsIndexPaths = Set<IndexPath>()
+    var currentlyVisibleHeaderIndexPaths = Set<IndexPath>()
     var latestScrollingDelta: CGFloat = 0
 
     // MARK: - Physics Parameter Tweaking
@@ -29,6 +30,10 @@ class MagicCollectionViewFlowLayout: UICollectionViewFlowLayout {
     let enableLimitForShiftOnYAxis = false
     let yAxisShiftLimit: CGFloat = 5
     var yAxisShiftLimitNegative: CGFloat { yAxisShiftLimit * -1 }
+
+    // workaround to remove the offset jump when I toggle between the collection layouts.
+    // happens if the collection view content size is less than the views content size.
+    var contentOffsetOldLayoutForAvoidingTransitionJump: CGPoint? = nil
 }
 
 // MARK: - Layout Lifecycle Methods
@@ -41,17 +46,28 @@ extension MagicCollectionViewFlowLayout {
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        return self.dynamicAnimator.items(in: rect) as? [UICollectionViewLayoutAttributes]
+        return self.dynamicAnimator.items(in: rect) as? [UICollectionViewLayoutAttributes] ?? super.layoutAttributesForElements(in: rect)
     }
 
+
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        return self.dynamicAnimator.layoutAttributesForCell(at: indexPath)
+        return self.dynamicAnimator.layoutAttributesForCell(at: indexPath) ?? super.layoutAttributesForItem(at: indexPath)
+    }
+
+    override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        return self.dynamicAnimator.layoutAttributesForSupplementaryView(ofKind: elementKind, at: indexPath) ?? super.layoutAttributesForSupplementaryView(ofKind: elementKind, at: indexPath)
     }
 
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
         self.latestScrollingDelta = calculateScrollDistance(forBoundsChange: newBounds)
         animateCenterChangeOfAllBehaviors()
-        return false // invalidating the layout is the dynamic animators responsibility.
+        if dynamicAnimator.isRunning {
+            // invalidating the layout is the dynamic animators responsibility.
+            return false
+        } else {
+            print("shouldInvalidateLayout: animator is not running. thus, super should invalidate the layout.")
+            return true
+        }
     }
 
     func calculateScrollDistance(forBoundsChange newBounds: CGRect) -> CGFloat {
@@ -68,8 +84,7 @@ extension MagicCollectionViewFlowLayout {
     }
 
     func getAllNoLongerVisibleBehaviors() -> [UIDynamicBehavior] {
-        let visibleItems = getVisibleItems()
-        let visibleItemsIndexPaths = getIndexPaths(of: visibleItems)
+        let visibleItemsIndexPaths = getIndexPathsOfVisibleItems()
         let noLongerVisibleBehaviors = self.dynamicAnimator.behaviors.filter { behavior in
             guard let behavior = behavior as? UIAttachmentBehavior else { return false }
             guard let attribute = behavior.items.first as? UICollectionViewLayoutAttributes else { return false }
@@ -79,11 +94,34 @@ extension MagicCollectionViewFlowLayout {
         return noLongerVisibleBehaviors
     }
 
+    func OLDgetAllNoLongerVisibleBehaviors() -> [UIDynamicBehavior] {
+        let visibleItemsIndexPaths = getIndexPathsOfVisibleItems()
+        let noLongerVisibleBehaviors = self.dynamicAnimator.behaviors.filter { behavior in
+            guard let behavior = behavior as? UIAttachmentBehavior else { return false }
+            guard let attribute = behavior.items.first as? UICollectionViewLayoutAttributes else { return false }
+            let currentlyVisible = visibleItemsIndexPaths.contains(attribute.indexPath)
+            return !currentlyVisible
+        }
+        return noLongerVisibleBehaviors
+    }
+
+    func getIndexPathsOfVisibleItems() -> Set<IndexPath> {
+        let visibleItems = getVisibleItems()
+        let itemsIndexPathsInVisibleRectSet = Set(visibleItems.map{ $0.indexPath })
+        return itemsIndexPathsInVisibleRectSet
+    }
+
     func getVisibleItems() -> [UICollectionViewLayoutAttributes] {
         // include items within 100points of the actual size as a buffer
         let visibleRect = getVisibleRect().insetBy(dx: -100, dy: -100)
         let itemsInVisibleRectArray = super.layoutAttributesForElements(in: visibleRect) ?? []
-        return itemsInVisibleRectArray
+        var itemAttributesCopy = [UICollectionViewLayoutAttributes]()
+        for attributes in itemsInVisibleRectArray {
+            let attributesCopy = attributes.copy() as! UICollectionViewLayoutAttributes
+            itemAttributesCopy.append(attributesCopy)
+        }
+
+        return itemAttributesCopy
     }
 
     func getVisibleRect() -> CGRect {
@@ -93,25 +131,31 @@ extension MagicCollectionViewFlowLayout {
         )
     }
 
-    func getIndexPaths(of visibleItems: [UICollectionViewLayoutAttributes]) -> Set<IndexPath> {
-        let itemsIndexPathsInVisibleRectSet = Set(visibleItems.map{ $0.indexPath })
-        return itemsIndexPathsInVisibleRectSet
-    }
-
     func removeBehaviors(_ behaviors: [UIDynamicBehavior]) {
         behaviors.forEach { behavior in
-            self.dynamicAnimator.removeBehavior(behavior)
             guard let behavior = behavior as? UIAttachmentBehavior else { return }
             guard let attribute = behavior.items.first as? UICollectionViewLayoutAttributes else { return }
-            self.currentlyVisibleItemsIndexPaths.remove(attribute.indexPath)
+            if attribute.representedElementCategory == .supplementaryView {
+                self.dynamicAnimator.removeBehavior(behavior)
+                self.currentlyVisibleHeaderIndexPaths.remove(attribute.indexPath)
+            } else { // cell
+                self.dynamicAnimator.removeBehavior(behavior)
+                self.currentlyVisibleItemsIndexPaths.remove(attribute.indexPath)
+            }
         }
     }
 
+    // todo maybe just call once for each scroll? its called SOOO often right now. maybe thats normal tho.
     func getItemsThatJustBecameVisible() -> [UICollectionViewLayoutAttributes] {
         let visibleItems = getVisibleItems()
         let newlyVisibleItems = visibleItems.filter { item in
-            let currentlyVisible = self.currentlyVisibleItemsIndexPaths.contains(item.indexPath)
-            return !currentlyVisible
+            if item.representedElementCategory == .supplementaryView {
+                let isHeaderAlreadyVisible = self.currentlyVisibleHeaderIndexPaths.contains(item.indexPath)
+                return !isHeaderAlreadyVisible
+            } else {
+                let isItemAlreadyVisible = self.currentlyVisibleItemsIndexPaths.contains(item.indexPath)
+                return !isItemAlreadyVisible
+            }
         }
         return newlyVisibleItems
     }
@@ -127,10 +171,9 @@ extension MagicCollectionViewFlowLayout {
                 y: CGFloat.rounded(item.center.y)()
             )
 
-            // set the item center to a rounded center if it's not rounded yet
+            // only set the item center to a rounded center if it's not rounded yet
             if item.center != centerRounded { item.center = centerRounded }
 
-            // configure spring behavior
             let springBehavior = UIAttachmentBehavior(item: item, attachedToAnchor: centerRounded)
             springBehavior.length = attachmentLength
             springBehavior.damping = springDamping
@@ -139,8 +182,13 @@ extension MagicCollectionViewFlowLayout {
                 springBehavior.frictionTorque = frictionTorque
             }
 
-            self.dynamicAnimator.addBehavior(springBehavior)
-            self.currentlyVisibleItemsIndexPaths.insert(item.indexPath)
+            if item.representedElementCategory == .supplementaryView {
+                self.dynamicAnimator.addBehavior(springBehavior)
+                self.currentlyVisibleHeaderIndexPaths.insert(item.indexPath)
+            } else {
+                self.dynamicAnimator.addBehavior(springBehavior)
+                self.currentlyVisibleItemsIndexPaths.insert(item.indexPath)
+            }
         }
     }
 }
@@ -152,6 +200,7 @@ extension MagicCollectionViewFlowLayout {
     }
 
     func animateCenterChange(for behavior: UIDynamicBehavior) {
+        // consider storing the last touch location somewhere instead of always getting it again for each behavior?
         guard let touchLocation = getTouchLocation() else { return }
         guard let springBehavior = behavior as? UIAttachmentBehavior else { return }
         guard let item = springBehavior.items.first as? UICollectionViewLayoutAttributes else { return }
@@ -196,5 +245,20 @@ extension MagicCollectionViewFlowLayout {
                 return amountOfYShift
             }
         }
+    }
+}
+
+// workaround for causing the jump when I toggle between the collection layouts.
+extension MagicCollectionViewFlowLayout {
+    override func prepareForTransition(from oldLayout: UICollectionViewLayout) {
+        contentOffsetOldLayoutForAvoidingTransitionJump = collectionView?.contentOffset
+    }
+
+    override func targetContentOffset(
+        forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+        if contentOffsetOldLayoutForAvoidingTransitionJump != nil {
+            return contentOffsetOldLayoutForAvoidingTransitionJump!
+        }
+        return super.targetContentOffset(forProposedContentOffset: proposedContentOffset)
     }
 }
