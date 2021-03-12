@@ -22,8 +22,3 @@ Download the sample project to see it in action and scroll through a list of yum
 Simply add it to your project in two steps: 
 1. Add the MagicCollectionViewFlowLayout file. 
 2. Set your collectionView's layout to an instance of MagicCollectionViewFlowLayout.
-
-## Features to be added soon
-- A natural zoom-in transition to a detail view. Goal: To give the user the impression that he/she is moving in an ever-expanding room - and to completely eradicate any hard transitions.
-
-
